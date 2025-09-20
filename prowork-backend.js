@@ -4,7 +4,7 @@ import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import fileUpload from 'express-fileupload';
-
+const proworkBackend = express();
 
 
 // Importing required modules from local files
@@ -18,6 +18,7 @@ import paymentRouter from './routes/Payment.js'
 import callRouter from './routes/Call.js'
 import otpRouter from './routes/OTP.js';
 import AdminRouter from './routes/Admin.js';
+import adminUserRoutes from './routes/adminUserRoutes.js';
 
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -27,11 +28,24 @@ const __dirname = path.dirname(__filename);
 
 
 
-const proworkBackend = express();
+
 const Port = process.env.PORT;
 
 // Applying middleware to the server
-proworkBackend.use(cors({ origin: [ 'http://localhost:4000', 'http://prowork.org.in', 'https://prowork.org.in'], methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'], allowedHeaders: ['Content-Type', 'Authorization', 'params'],  credentials: true }));
+proworkBackend.use(cors({
+  origin: [
+    'http://localhost:4001',
+    'http://192.168.1.4:4001',
+    'http://localhost:5173',
+    'http://localhost:4000',
+    'http://prowork.org.in',
+    'https://prowork.org.in'
+  ],
+  methods: ['GET','POST','PUT','DELETE','PATCH','OPTIONS'],
+  allowedHeaders: ['Content-Type','Authorization','params','x-admin-key'],
+  credentials: true
+}));
+
 proworkBackend.use(cookieParser());
 proworkBackend.use(express.json());
 proworkBackend.use(express.urlencoded({ extended: true }));
@@ -69,7 +83,9 @@ proworkBackend.use('/worker', workerRouter);
 proworkBackend.use('/payment', paymentRouter);
 proworkBackend.use('/call', callRouter);
 proworkBackend.use('/otp', otpRouter);
+proworkBackend.use('/ayush-admin/users', adminUserRoutes);
 proworkBackend.use('/ayush-admin', AdminRouter);
+
 
 
 
